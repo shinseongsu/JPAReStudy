@@ -7,3 +7,7 @@
 
 2. ``localhost:8080/h2-console`` 로 접속을 하면 스프링 부트에 내장된 DB를 사용해 볼수 있다.
 
+3. H2 결과
+
+![CreatePlan](./images/h2_screen.png)
+
