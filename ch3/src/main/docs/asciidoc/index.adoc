@@ -1,0 +1,26 @@
+= RESTful API Documents
+
+:toc: left
+
+
+
+= Overview
+
+RESTful API 문서
+
+
+
+[[user]]
+
+== 사용자
+
+사용자
+
+=== request
+include::{snippets}/create-event/request-fields.adoc[]
+include::{snippets}/create-event/http-request.adoc[]
+
+
+== response
+include::{snippets}/create-event/response-fields.adoc[]
+include::{snippets}/create-event/http-response.adoc[]
