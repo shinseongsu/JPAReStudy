@@ -8,14 +8,13 @@ import com.example.jpa.user.entity.User;
 import com.example.jpa.user.exception.ExistsEmailException;
 import com.example.jpa.user.exception.PasswordNotMatchException;
 import com.example.jpa.user.exception.UserNotFoundException;
-import com.example.jpa.user.model.UserInput;
-import com.example.jpa.user.model.UserInputPassword;
-import com.example.jpa.user.model.UserResponse;
-import com.example.jpa.user.model.UserUpdate;
+import com.example.jpa.user.model.*;
 import com.example.jpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +23,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -163,6 +163,14 @@ public class ApiUserController {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * 비밀번호 변경
+     *
+     * @param id
+     * @param userInputPassword
+     * @param errors
+     * @return
+     */
     @PatchMapping("/api/user/{id}/password")
     public ResponseEntity<?> updateUserPassword(@PathVariable Long id, @RequestBody UserInputPassword userInputPassword, Errors errors) {
 
@@ -182,6 +190,113 @@ public class ApiUserController {
         userRepository.save(user);
 
         return ResponseEntity.ok().build();
+    }
+
+
+    private String getEncryptPassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return bCryptPasswordEncoder.encode(password);
+    }
+
+    @PostMapping("/api/user4")
+    public ResponseEntity<?> addUser4(@RequestBody @Valid UserInput userInput, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if(errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError) e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        if( userRepository.countByEmail(userInput.getEmail())  > 0) {
+            throw new ExistsEmailException("이미 가입된 이메일 입니다.");
+        }
+
+        String encryptPassword = getEncryptPassword(userInput.getPassword());
+
+        User user = User.builder()
+                .email(userInput.getEmail())
+                .userName(userInput.getUserName())
+                .phone(userInput.getPhone())
+                .password(encryptPassword)
+                .regDate(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/api/user/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        // 내가 쓴 공지사항이 있는 경우
+        // -> ???
+        // 1. 삭제 못해. 삭제하려면 공지사항 제거하고 와.
+        // 2. 회원삭제전에 공지사항글을 다 삭제하는 경우.
+
+        try {
+            userRepository.delete(user);
+        } catch (DataIntegrityViolationException e) {
+            String message = "제약조건에 문제가 발생하였습니다.";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            String message = "회원 탈퇴 중 문제가 발생하였습니다.";
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 사용자 아이디 찾는 API
+     *
+     */
+    @GetMapping("/api/user")
+    public ResponseEntity<?> findUser(@RequestBody UserInputFind userInputFind) {
+
+        User user = userRepository.findByUserNameAndPhone(userInputFind.getUserName(), userInputFind.getPhone())
+                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        UserResponse userResponse = UserResponse.of(user);
+
+        return ResponseEntity.ok().body(userResponse);
+    }
+
+    /**
+     * 사용자 비밀번호 초기화 요청
+     */
+    @GetMapping("/api/user/{id}/password/reset")
+    public ResponseEntity<?> resetUserPassword(@PathVariable Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        // 비밀번호 초기화
+        String resetPassword = getResetPassword();
+        String resetEncryptPassword = getEncryptPassword(  resetPassword );
+        user.setPassword(resetEncryptPassword);
+        userRepository.save(user);
+
+        String message = String.format("[%s]님의 임시비밀번호는 [%s] 로 초기화 되었습니다.",
+                 user.getUserName() ,
+                 resetPassword);
+        sendSMS(message);
+
+        return ResponseEntity.ok().build();
+    }
+
+
+    public String getResetPassword() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+    }
+
+    public void sendSMS(String message) {
+        System.out.println("[문자 메시지 전송]");
+        System.out.println(message);
     }
 
 }
