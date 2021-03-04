@@ -1,5 +1,5 @@
 INSERT INTO USER (ID, EMAIL, PASSWORD, PHONE, REG_DATE, UPDATE_DATE, USER_NAME)
-VALUES (1, 'test@naver.com', '$2a$10$aVjtWrojTOJJStC5EFH6Z.nG/U4c0PXJke3pmYWElmS/M77dG3Ud2', '010-1111-2222', '2021-02-01 00:49:43.000000', null, '박규태')
+VALUES (1, 'test@naver.com', '$2a$10$vmDAeZhbU0Y22tyDjOO22es4wPkuooaNqcMPtn87UdqSahN9RJKVa', '010-1111-2222', '2021-02-01 00:49:43.000000', null, '박규태')
      , (2, 'test1@gmail.com', '2222', '010-3333-4444', '2021-02-19 00:50:11.000000', null, '정혜경')
      , (3, 'test2@gmail.com', '3333', '010-5555-6666', '2021-02-19 23:27:07.000000', null, '박하은')
      , (4, 'test3@gmail.com', '4444', '010-7777-9999', '2021-02-02 00:27:51.000000', null, '박하영');
@@ -16,3 +16,11 @@ VALUES (2, '내용2', null, false, 0, 0, '2021-02-01 01:12:37.000000', '제목2'
      , (8, '내용8', null, false, 0, 0, '2021-02-01 23:31:32.000000', '제목8', null, 3)
      , (9, '내용9', null, false, 0, 0, '2021-02-01 23:31:35.000000', '제목9', null, 1)
      , (10, '내용10', null, false, 0, 0, '2021-02-01 23:31:38.000000', '제목10', null, 1);
+
+INSERT INTO NOTICE_LIKE (ID, NOTICE_ID, USER_ID)
+VALUES (1, 3, 1)
+     , (2, 4, 1)
+     , (3, 1, 1)
+     , (4, 3, 2)
+     , (5, 1, 4)
+     , (6, 2, 4);
