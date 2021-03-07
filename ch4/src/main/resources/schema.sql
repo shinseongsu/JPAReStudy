@@ -9,6 +9,8 @@ create table user
     reg_date timestamp,
     user_name varchar(255),
     update_date timestamp,
+    STATUS INTEGER,
+    LOCK_YN BOOLEAN,
     primary key (id)
 );
 
@@ -37,4 +39,14 @@ create table notice_like (
     constraint  FK_NOTICE_LIKE_NOTICE_ID foreign key (NOTICE_ID) references NOTICE (ID),
     constraint  FK_NOTICE_LIKE_USER_ID foreign key (USER_ID) references USER (ID),
     primary key (id)
+);
+
+create table USER_LOGIN_HISTORY
+(
+    ID          bigint auto_increment primary key,
+    USER_ID     BIGINT,
+    EMAIL       VARCHAR(255),
+    USER_NAME   VARCHAR(255),
+    LOGIN_DATE  TIMESTAMP,
+    IP_ADDR     VARCHAR(255)
 );
