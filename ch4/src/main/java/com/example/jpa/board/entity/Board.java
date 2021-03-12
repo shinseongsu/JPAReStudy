@@ -1,5 +1,6 @@
 package com.example.jpa.board.entity;
 
+import com.example.jpa.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,22 +14,30 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Builder
-public class BoardType {
+public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ManyToOne
+    @JoinColumn
+    private User user;
+
+    @ManyToOne
+    @JoinColumn
+    private BoardType boardType;
+
     @Column
-    private String boardName;
+    private String title;
+
+    @Column
+    private String content;
 
     @Column
     private LocalDateTime regDate;
 
     @Column
-    private LocalDateTime updateDate;
-
-    @Column
-    private boolean usingYn;
+    private boolean topYn;
 
 }
