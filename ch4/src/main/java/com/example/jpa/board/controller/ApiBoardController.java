@@ -1,13 +1,13 @@
 package com.example.jpa.board.controller;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.jpa.board.entity.BoardType;
-import com.example.jpa.board.model.BoardTypeCount;
-import com.example.jpa.board.model.BoardTypeInput;
-import com.example.jpa.board.model.BoardTypeUsing;
-import com.example.jpa.board.model.ServiceResult;
+import com.example.jpa.board.model.*;
 import com.example.jpa.board.service.BoardService;
+import com.example.jpa.common.model.ResponseResult;
 import com.example.jpa.notice.model.ResponseError;
 import com.example.jpa.user.model.ResponseMessage;
+import com.example.jpa.util.JWTUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,9 +121,87 @@ public class ApiBoardController {
     @PatchMapping("/api/board/{id}/top")
     public ResponseEntity<?> boardPostTop(@PathVariable Long id) {
 
-        ServiceResult result = boardService.setBoardTop(id);
+        ServiceResult result = boardService.setBoardTop(id, true);
         return ResponseEntity.ok().body(result);
     }
 
+    @PatchMapping("/api/board/{id}/top/clear")
+    public ResponseEntity<?> boardPostTopClear(@PathVariable Long id) {
+        ServiceResult result = boardService.setBoardTop(id, false);
+        return ResponseEntity.ok().body(result);
+    }
+
+
+    /**
+     * 개사글 게시기간을 시작일과 종료일로 설정하는 API
+     */
+    @PatchMapping("/api/board/{id}/publish")
+    public ResponseEntity<?> boardPeriod(@PathVariable Long id, @RequestBody BoardPeriod boardPeriod) {
+
+        ServiceResult result = boardService.setBoardPeriod(id, boardPeriod);
+
+        if (result.isResult()) {
+            return ResponseResult.fail(result.getMessage());
+        }
+
+        return ResponseResult.success();
+    }
+
+    /**
+     * 게시글의 조회수를 증가시키는 API
+     */
+    @PutMapping("/api/board/{id}/hits")
+    public ResponseEntity<?> boardHits(@PathVariable Long id
+                        , @RequestHeader("S-TOKEN") String token ) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = boardService.setBoardHits(id, email);
+        if(result.isResult()) {
+            return ResponseResult.fail(result.getMessage());
+        }
+        return ResponseResult.success();
+    }
+
+    /**
+     * 게시글에 대한 좋아요가 기능을 수행하는 API
+     */
+    @PutMapping("/api/board/{id}/like")
+    public ResponseEntity<?> boardLike(@PathVariable Long id
+                        , @RequestHeader("S-TOKEN") String token ) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = boardService.setBoardLike(id, email);
+        return ResponseResult.result(result);
+    }
+
+    /**
+     * 게시글에 대한 좋아요가 기능을 수행하는 API
+     */
+    @PutMapping("/api/board/{id}/unlike")
+    public ResponseEntity<?> boardUnLike(@PathVariable Long id
+            , @RequestHeader("S-TOKEN") String token ) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = boardService.setBoardUnLike(id, email);
+        return ResponseResult.result(result);
+    }
 
 }

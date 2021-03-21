@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Builder
-public class Board {
+public class BoardHits {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,28 +22,13 @@ public class Board {
 
     @ManyToOne
     @JoinColumn
-    private User user;
+    private Board board;
 
     @ManyToOne
     @JoinColumn
-    private BoardType boardType;
-
-    @Column
-    private String title;
-
-    @Column
-    private String content;
+    private User user;
 
     @Column
     private LocalDateTime regDate;
-
-    @Column
-    private boolean topYn;
-
-    @Column
-    private LocalDate publishStartDate;
-
-    @Column
-    private LocalDate publishEndDate;
 
 }

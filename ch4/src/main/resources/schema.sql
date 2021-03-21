@@ -71,6 +71,29 @@ CREATE TABLE BOARD
 	USER_ID BIGINT,
 	TOP_YN BOOLEAN,
 
+	PUBLISH_START_DATE DATE,
+	PUBLISH_END_DATE DATE,
+
 	CONSTRAINT FK_BOARRD_TYPE_ID FOREIGN KEY (BOARD_TYPE_ID) REFERENCES BOARD_TYPE(ID),
 	CONSTRAINT FK_BOARD_USER_ID FOREIGN KEY (USER_ID) REFERENCES USER(ID)
+);
+
+create table board_hits (
+    id bigint AUTO_INCREMENT primary key,
+    reg_date timestamp,
+    board_id bigint,
+    user_id bigint,
+
+    CONSTRAINT FK_BOARD_HITS_BOARD_ID foreign key (board_id) references BOARD(ID),
+    CONSTRAINT FK_BOARD_HITS_USER_ID foreign key (user_id) references USER(ID)
+);
+
+create table board_like (
+    id bigint AUTO_INCREMENT primary key,
+    reg_date timestamp,
+    board_id bigint,
+    user_id bigint,
+
+    CONSTRAINT FK_BOARD_LIKE_BOARD_ID foreign key (board_id) references BOARD(ID),
+    CONSTRAINT FK_BOARD_LIKE_USER_ID foreign key (user_id) references USER(ID)
 );

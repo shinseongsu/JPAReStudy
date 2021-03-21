@@ -1,10 +1,7 @@
 package com.example.jpa.board.service;
 
 import com.example.jpa.board.entity.BoardType;
-import com.example.jpa.board.model.BoardTypeCount;
-import com.example.jpa.board.model.BoardTypeInput;
-import com.example.jpa.board.model.BoardTypeUsing;
-import com.example.jpa.board.model.ServiceResult;
+import com.example.jpa.board.model.*;
 
 import java.util.List;
 
@@ -41,4 +38,26 @@ public interface BoardService {
      * @return
      */
     ServiceResult setBoardTop(Long id);
+
+    ServiceResult setBoardTop(Long id, boolean flag);
+
+    /**
+     * 게시의 게시기간을 설정
+     */
+    ServiceResult setBoardPeriod(Long id, BoardPeriod boardPeriod);
+
+    /**
+     * 게시글의 조회수 증가
+     */
+    ServiceResult setBoardHits(Long id, String email);
+
+    /**
+     * 게시글의 좋아요를 증가
+     */
+    ServiceResult setBoardLike(Long id, String email);
+
+    /**
+     * 게시글의 좋아요를 취소함
+     */
+    ServiceResult setBoardUnLike(Long id, String email);
 }
