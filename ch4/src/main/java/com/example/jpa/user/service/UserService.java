@@ -1,5 +1,6 @@
 package com.example.jpa.user.service;
 
+import com.example.jpa.board.model.ServiceResult;
 import com.example.jpa.user.entity.User;
 import com.example.jpa.user.model.UserLogCount;
 import com.example.jpa.user.model.UserNoticeCount;
@@ -20,4 +21,12 @@ public interface UserService {
      * @return
      */
     List<UserLogCount> getUserLikeBest();
+
+    /**
+     * 관심 사용자 등록
+     * @param email
+     * @param id
+     * @return
+     */
+    ServiceResult addInterestUser(String email, Long id);
 }

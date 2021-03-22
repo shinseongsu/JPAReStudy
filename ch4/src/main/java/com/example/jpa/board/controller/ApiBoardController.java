@@ -204,4 +204,23 @@ public class ApiBoardController {
         return ResponseResult.result(result);
     }
 
+    /**
+     * 게시판 게시글에 대해서 문제가 있는 게시글을 신고하는 기능의 API
+     */
+    @PutMapping("/api/board/{id}/badreport")
+    public ResponseEntity<?> boardBadReport(@PathVariable Long id
+                            , @RequestHeader("S-TOKEN") String token
+                            , @RequestBody BoardBadReportInput boardBadReportInput) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = boardService.addBadReport(id, email, boardBadReportInput);
+        return ResponseResult.result(result);
+    }
+
 }

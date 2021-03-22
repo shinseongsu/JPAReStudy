@@ -97,3 +97,53 @@ create table board_like (
     CONSTRAINT FK_BOARD_LIKE_BOARD_ID foreign key (board_id) references BOARD(ID),
     CONSTRAINT FK_BOARD_LIKE_USER_ID foreign key (user_id) references USER(ID)
 );
+
+create table board_bad_report (
+    id bigint AUTO_INCREMENT primary key,
+    board_contents varchar(255),
+    board_id bigint, board_reg_date timestamp,
+    board_title varchar(255),
+    board_user_id bigint,
+    comments varchar(255),
+    reg_date timestamp,
+    user_email varchar(255),
+    user_id bigint,
+    user_name varchar(255)
+);
+
+create table board_scrap (
+    id bigint AUTO_INCREMENT primary key,
+    board_contents varchar(255),
+    board_id bigint,
+    board_reg_date timestamp,
+    board_title varchar(255),
+    board_type_id bigint,
+    board_user_id bigint,
+    reg_date timestamp,
+    user_id bigint,
+
+    CONSTRAINT FK_BOARD_SCRAP foreign key (USER_ID) references USER (ID)
+);
+
+create table board_bookmark (
+    id bigint AUTO_INCREMENT primary key,
+    user_id bigint,
+    board_id      bigint,
+    board_type_id bigint,
+    board_title varchar(255),
+    board_url varchar(255),
+    reg_date timestamp,
+
+    CONSTRAINT FK_BOARD_BOOKMARK_USER_ID foreign key (USER_ID) references USER (ID)
+);
+
+create table user_Interest (
+    id bigint AUTO_INCREMENT primary key,
+
+    user_id bigint,
+    interest_user_id bigint,
+    reg_date timestamp,
+
+    CONSTRAINT FK_USER_INTEREST_USER_ID foreign key (USER_ID) references USER (ID),
+    CONSTRAINT FK_USER_INTEREST_INTEREST_USER_ID foreign key (interest_user_id) references USER (ID)
+);

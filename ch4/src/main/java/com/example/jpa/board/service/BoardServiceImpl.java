@@ -1,9 +1,6 @@
 package com.example.jpa.board.service;
 
-import com.example.jpa.board.entity.Board;
-import com.example.jpa.board.entity.BoardHits;
-import com.example.jpa.board.entity.BoardLike;
-import com.example.jpa.board.entity.BoardType;
+import com.example.jpa.board.entity.*;
 import com.example.jpa.board.model.*;
 import com.example.jpa.board.repository.*;
 import com.example.jpa.user.entity.User;
@@ -28,6 +25,9 @@ public class BoardServiceImpl implements BoardService {
     private final BoardHitsRepository boardHitsRepository;
     private final UserRepository userRepository;
     private final BoardLikeRepository boardLikeRepository;
+    private final BoardBadReportRepository boardBadReportRepository;
+    private final BoardScrapRepository boardScrapRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
 
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
@@ -245,6 +245,157 @@ public class BoardServiceImpl implements BoardService {
         }
         BoardLike boardLike = optionalBoardLike.get();
 
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult addBadReport(Long id, String email, BoardBadReportInput boardBadReportInput) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        BoardBadReport boardBadReport = BoardBadReport.builder()
+                .userId(user.getId())
+                .userName(user.getEmail())
+                .userEmail(user.getEmail())
+
+                .boardId(board.getId())
+                .boardUserId(board.getUser().getId())
+                .boardTitle(board.getTitle())
+                .boardContents(board.getContent())
+                .boardRegDate(board.getRegDate())
+
+                .comments(boardBadReportInput.getComments())
+                .build();
+
+        boardBadReportRepository.save(boardBadReport);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public List<BoardBadReport> badReportList() {
+        return boardBadReportRepository.findAll();
+    }
+
+    @Override
+    public ServiceResult scrap(Long id, String email) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        BoardScrap boardScrap = BoardScrap.builder()
+                .user(user)
+                .boardId(board.getId())
+                .boardTypeId(board.getBoardType().getId())
+                .boardTitle(board.getTitle())
+                .boardContents(board.getContent())
+                .boardRegDate(board.getRegDate())
+
+                .regDate(LocalDateTime.now())
+                .build();
+        boardScrapRepository.save(boardScrap);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult removeScrap(Long id, String email) {
+
+        Optional<BoardScrap> optionalBoardScrap = boardScrapRepository.findById(id);
+        if(optionalBoardScrap.isPresent()) {
+            return ServiceResult.fail("삭제할 스크랩이 없습니다.");
+        }
+        BoardScrap boardScrap = optionalBoardScrap.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        // 내 스크랩인지 확인 필요
+        if ( user.getId() != boardScrap.getUser().getId()) {
+            return ServiceResult.fail("본인의 스크랩만 삭제할 수 있습니다.");
+        }
+
+        boardScrapRepository.delete(boardScrap);
+        return ServiceResult.success();
+    }
+
+    private String getBoardUrl(long boardId) {
+
+        return String.format("/board/%d", boardId);
+    }
+
+    @Override
+    public ServiceResult addBookmark(Long id, String email) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        BoardBookmark boardBookmark = BoardBookmark.builder()
+                .user(user)
+
+                .boardId(board.getId())
+                .boardTypeId(board.getBoardType().getId())
+                .boardTitle(board.getTitle())
+                .boardUrl(getBoardUrl(board.getId()))
+                .regDate(LocalDateTime.now())
+                .build();
+
+        boardBookmarkRepository.save(boardBookmark);
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult removeBookmark(Long id, String email) {
+
+        Optional<BoardBookmark> optionalBoardBookmark = boardBookmarkRepository.findById(id);
+        if(optionalBoardBookmark.isPresent()) {
+            return ServiceResult.fail("삭제할 북마크가 없습니다.");
+        }
+        BoardBookmark boardBookmark = optionalBoardBookmark.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        // 내 북마크인지 확인 필요
+        if ( user.getId() != boardBookmark.getUser().getId()) {
+            return ServiceResult.fail("본인의 북마크만 삭제할 수 있습니다.");
+        }
+
+        boardBookmarkRepository.delete(boardBookmark);
         return ServiceResult.success();
     }
 

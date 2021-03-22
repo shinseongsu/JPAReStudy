@@ -1,5 +1,6 @@
 package com.example.jpa.board.service;
 
+import com.example.jpa.board.entity.BoardBadReport;
 import com.example.jpa.board.entity.BoardType;
 import com.example.jpa.board.model.*;
 
@@ -60,4 +61,34 @@ public interface BoardService {
      * 게시글의 좋아요를 취소함
      */
     ServiceResult setBoardUnLike(Long id, String email);
+
+    /**
+     * 게시글을 신고하는 API
+     */
+    ServiceResult addBadReport(Long id, String email, BoardBadReportInput boardBadReportInput);
+
+    /**
+     * 신고된 게시글의 목록
+     */
+    List<BoardBadReport> badReportList();
+
+    /**
+     * 게시글 스크랩
+     */
+    ServiceResult scrap(Long id, String email);
+
+    /**
+     * 게시글 스크랩 삭제 기능
+     */
+    ServiceResult removeScrap(Long id, String email);
+
+    /**
+     * 북마크 추가
+     */
+    ServiceResult addBookmark(Long id, String email);
+
+    /**
+     * 북마크 삭제
+     */
+    ServiceResult removeBookmark(Long id, String email);
 }
