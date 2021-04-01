@@ -2,7 +2,13 @@ package com.example.jpa.user.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.example.jpa.board.entity.Board;
+import com.example.jpa.board.entity.BoardComment;
+import com.example.jpa.board.model.ServiceResult;
+import com.example.jpa.board.service.BoardService;
+import com.example.jpa.common.model.ResponseResult;
 import com.example.jpa.notice.entity.Notice;
 import com.example.jpa.notice.entity.NoticeLike;
 import com.example.jpa.notice.model.NoticeResponse;
@@ -15,6 +21,7 @@ import com.example.jpa.user.exception.PasswordNotMatchException;
 import com.example.jpa.user.exception.UserNotFoundException;
 import com.example.jpa.user.model.*;
 import com.example.jpa.user.repository.UserRepository;
+import com.example.jpa.user.service.PointService;
 import com.example.jpa.util.JWTUtils;
 import com.example.jpa.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +49,9 @@ public class ApiUserController {
     private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
     private final NoticeLikeRepository noticeLikeRepository;
+
+    private final BoardService boardService;
+    private final PointService pointService;
 
     @PostMapping("/api/user")
     public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
@@ -416,6 +426,58 @@ public class ApiUserController {
         // 블랙리스트 작성
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 내가 작성한 게시글 목록을 리턴
+     */
+    @GetMapping("/api/user/board/post")
+    public ResponseEntity<?> myPost(@RequestHeader("S-TOKEN") String token) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰정보가 정확하지 않습니다.");
+        }
+
+        List<Board> list = boardService.postList(email);
+        return ResponseResult.success(list);
+    }
+
+    /**
+     * 내가 작성한 게시글의 코멘트 목록을 리턴하는 API
+     */
+    @GetMapping("/api/user/board/comment")
+    public ResponseEntity<?> myComments(@RequestHeader("S-TOKEN") String token) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰정보가 정확하지 않습니다.");
+        }
+
+        List<BoardComment> list = boardService.commentList(email);
+        return ResponseResult.success(list);
+    }
+
+    /**
+     * 사용자의 포인트 정보를 만들고 게시글을 작성할 경우, 포인트를 누적하는 API 작성
+     */
+    @PostMapping("/api/user/point")
+    public ResponseEntity<?> userPoint(@RequestHeader("S-TOKEN") String token,
+                          @RequestBody UserPointInput userPointInput) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = pointService.ADDPoint(email, userPointInput);
+        return ResponseResult.result(result);
     }
 
 }

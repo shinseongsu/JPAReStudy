@@ -147,3 +147,21 @@ create table user_Interest (
     CONSTRAINT FK_USER_INTEREST_USER_ID foreign key (USER_ID) references USER (ID),
     CONSTRAINT FK_USER_INTEREST_INTEREST_USER_ID foreign key (interest_user_id) references USER (ID)
 );
+
+create table BOARD_COMMENT (
+    ID       BIGINT AUTO_INCREMENT primary key,
+    COMMENTS VARCHAR(255),
+    REG_DATE TIMESTAMP,
+    BOARD_ID BIGINT,
+    USER_ID  BIGINT,
+    CONSTRAINT FK_BOARD_COMMENT_USER_ID foreign key (USER_ID) references USER (ID),
+    CONSTRAINT FK_BOARD_COMMENT_BOARD_ID foreign key (BOARD_ID) references BOARD (ID)
+);
+
+create table BOARD_POINT (
+    ID              BIGINT AUTO_INCREMENT primary key,
+    POINT           INTEGER,
+    USER_POINT_TYPE VARCHAR(255),
+    USER_ID         BIGINT,
+    CONSTRAINT FK_USER_POINT_USER_ID foreign key(USER_ID) references USER (ID)
+);

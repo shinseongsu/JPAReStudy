@@ -3,6 +3,7 @@ package com.example.jpa.board.service;
 import com.example.jpa.board.entity.*;
 import com.example.jpa.board.model.*;
 import com.example.jpa.board.repository.*;
+import com.example.jpa.common.exception.BizException;
 import com.example.jpa.user.entity.User;
 import com.example.jpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardBadReportRepository boardBadReportRepository;
     private final BoardScrapRepository boardScrapRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
+    private final BoardCommentRepository boardCommentRepository;
 
     @Override
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
@@ -397,6 +399,32 @@ public class BoardServiceImpl implements BoardService {
 
         boardBookmarkRepository.delete(boardBookmark);
         return ServiceResult.success();
+    }
+
+    @Override
+    public List<Board> postList(String email) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        List<Board> list =  boardRepository.findByUser(user);
+        return list;
+    }
+
+    @Override
+    public List<BoardComment> commentList(String email) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        List<BoardComment> list = boardCommentRepository.findByUser(user);
+        return list;
     }
 
 
