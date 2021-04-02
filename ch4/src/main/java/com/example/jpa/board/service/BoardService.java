@@ -103,4 +103,9 @@ public interface BoardService {
      * 내가 작성한 코멘트 목록 리턴
      */
     List<BoardComment> commentList(String email);
+
+    /**
+     * 게시글 상세 정보
+     */
+    Board detail(Long id);
 }

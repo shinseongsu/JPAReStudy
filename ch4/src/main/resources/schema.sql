@@ -165,3 +165,10 @@ create table BOARD_POINT (
     USER_ID         BIGINT,
     CONSTRAINT FK_USER_POINT_USER_ID foreign key(USER_ID) references USER (ID)
 );
+
+
+create table LOGS (
+    ID          BIGINT AUTO_INCREMENT primary key,
+    TEXT        CLOB,
+    REG_DATE    TIMESTAMP
+);
