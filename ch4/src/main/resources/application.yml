@@ -36,3 +36,9 @@ logging:
   file:
     name: ./logs/spring-jpa.log
 
+
+#### 네이버 API
+
+naver-app:
+  client-id: uWul_f1iu4CocH7srmwj
+  client-secret: MAuGIpWeC2

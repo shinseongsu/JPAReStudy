@@ -241,4 +241,27 @@ public class ApiBoardController {
         return ResponseResult.success(board);
     }
 
+    @GetMapping("/api/board")
+    public ResponseEntity<?> list() {
+        List<Board> list = boardService.list();
+        return ResponseResult.success();
+    }
+
+    @PostMapping("/api/board")
+    public ResponseEntity<?> add(
+            @RequestHeader("S-TOKEN") String token,
+            @RequestBody BoardInput boardInput) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = boardService.add(email, boardInput);
+        return ResponseResult.result(result);
+    }
+
+
 }

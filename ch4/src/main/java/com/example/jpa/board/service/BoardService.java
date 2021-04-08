@@ -108,4 +108,11 @@ public interface BoardService {
      * 게시글 상세 정보
      */
     Board detail(Long id);
+
+    /**
+     * 게시글 목록
+     */
+    List<Board> list();
+
+    ServiceResult add(String email, BoardInput boardInput);
 }
