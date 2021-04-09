@@ -28,6 +28,17 @@ spring:
 
   mustache:
     suffix: .html
+  mail:
+    username:
+    password:
+    host: smtp.gamil.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:

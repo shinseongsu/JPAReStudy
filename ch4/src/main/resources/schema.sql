@@ -11,6 +11,10 @@ create table user
     update_date timestamp,
     STATUS INTEGER,
     LOCK_YN BOOLEAN,
+
+    PASSWORD_RESET_YN  BOOLEAN,
+    PASSWORD_RESET_KEY VARCHAR(255),
+
     primary key (id)
 );
 

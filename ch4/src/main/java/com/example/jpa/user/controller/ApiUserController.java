@@ -8,6 +8,7 @@ import com.example.jpa.board.entity.Board;
 import com.example.jpa.board.entity.BoardComment;
 import com.example.jpa.board.model.ServiceResult;
 import com.example.jpa.board.service.BoardService;
+import com.example.jpa.common.exception.BizException;
 import com.example.jpa.common.model.ResponseResult;
 import com.example.jpa.notice.entity.Notice;
 import com.example.jpa.notice.entity.NoticeLike;
@@ -22,6 +23,7 @@ import com.example.jpa.user.exception.UserNotFoundException;
 import com.example.jpa.user.model.*;
 import com.example.jpa.user.repository.UserRepository;
 import com.example.jpa.user.service.PointService;
+import com.example.jpa.user.service.UserService;
 import com.example.jpa.util.JWTUtils;
 import com.example.jpa.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,8 @@ public class ApiUserController {
 
     private final BoardService boardService;
     private final PointService pointService;
+
+    private final UserService userService;
 
     @PostMapping("/api/user")
     public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
@@ -477,6 +481,32 @@ public class ApiUserController {
         }
 
         ServiceResult result = pointService.ADDPoint(email, userPointInput);
+        return ResponseResult.result(result);
+    }
+
+    @PostMapping("/api/public/user")
+    public ResponseEntity<?> addUser(@RequestBody UserInput userInput) {
+
+        ServiceResult result = userService.addUser(userInput);
+        return ResponseResult.result(result);
+    }
+
+    /**
+     * 비밀번호 초기화를 위해서 이메일로 인증코드를 전송하는 API
+     */
+    @PostMapping("/api/public/user/password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid UserPasswordResultInput userPasswordResultInput, Errors errors) {
+
+        if(errors.hasErrors()) {
+            return ResponseResult.fail("입력값이 정확하지 않습니다.", ResponseError.of(errors.getAllErrors()));
+        }
+
+        ServiceResult result = null;
+        try {
+            result = userService.resetPassword(userPasswordResultInput);
+        } catch(BizException e) {
+            return ResponseResult.fail(e.getMessage());
+        }
         return ResponseResult.result(result);
     }
 
