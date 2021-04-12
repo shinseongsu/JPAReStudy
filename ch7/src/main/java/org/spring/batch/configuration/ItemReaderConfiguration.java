@@ -11,7 +11,9 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -20,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +35,16 @@ public class ItemReaderConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
+    private final EntityManagerFactory entityManagerFactory;
 
     public ItemReaderConfiguration(JobBuilderFactory jobBuilderFactory,
                                    StepBuilderFactory stepBuilderFactory,
-                                   DataSource dataSource) {
+                                   DataSource dataSource,
+                                   EntityManagerFactory entityManagerFactory){
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.dataSource = dataSource;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Bean
@@ -48,6 +54,7 @@ public class ItemReaderConfiguration {
                 .start(this.customItemReaderStep())
                 .next(this.cvsFileStep())
                 .next(this.jdbcStep())
+                .next(this.jobStep())
                 .build();
     }
 
@@ -77,6 +84,27 @@ public class ItemReaderConfiguration {
                 .writer(itemWriter())
                 .build();
     }
+
+    @Bean
+    public Step jobStep() throws Exception {
+        return stepBuilderFactory.get("jpaStep")
+                .<Person, Person>chunk(10)
+                .reader(this.jpaCursorItemReader())
+                .writer(itemWriter())
+                .build();
+    }
+
+    private JpaCursorItemReader<Person> jpaCursorItemReader() throws Exception {
+        JpaCursorItemReader<Person> itemReader = new JpaCursorItemReaderBuilder<Person>()
+                .name("jpaCursorItemReader")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("select p from Person p")
+                .build();
+        itemReader.afterPropertiesSet();
+
+        return itemReader;
+    }
+
 
     private JdbcCursorItemReader<Person> jdbcCursorItemReader() throws Exception {
         JdbcCursorItemReader<Person> itemReader = new JdbcCursorItemReaderBuilder<Person>()
