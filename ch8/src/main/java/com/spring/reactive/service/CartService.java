@@ -2,10 +2,17 @@ package com.spring.reactive.service;
 
 import com.spring.reactive.dto.Cart;
 import com.spring.reactive.dto.CartItem;
+import com.spring.reactive.dto.Item;
 import com.spring.reactive.repository.CartRepository;
+import com.spring.reactive.repository.ItemByExampleRepository;
 import com.spring.reactive.repository.ItemRepository;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static org.springframework.data.domain.ExampleMatcher.StringMatcher;
 
 @Service
 public class CartService  {
@@ -13,7 +20,8 @@ public class CartService  {
     private final ItemRepository itemRepository;
     private final CartRepository cartRepository;
 
-    public CartService(ItemRepository itemRepository, CartRepository cartRepository) {
+    public CartService(ItemRepository itemRepository,
+                       CartRepository cartRepository) {
         this.itemRepository = itemRepository;
         this.cartRepository = cartRepository;
     }

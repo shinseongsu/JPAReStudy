@@ -43,12 +43,22 @@
             <PaintGroupHighlightMap />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/spring/reactive/repository/ItemByExampleRepository.java">
+          <value>
+            <PaintGroupHighlightMap />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/spring/reactive/repository/ItemRepository.java">
           <value>
             <PaintGroupHighlightMap />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/com/spring/reactive/service/CartService.java">
+          <value>
+            <PaintGroupHighlightMap />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/java/com/spring/reactive/service/InventoryService.java">
           <value>
             <PaintGroupHighlightMap />
           </value>
