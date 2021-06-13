@@ -1,11 +1,11 @@
 package com.spring.reactive.controller;
 
 import com.spring.reactive.dto.Cart;
-import com.spring.reactive.dto.CartItem;
 import com.spring.reactive.repository.CartRepository;
 import com.spring.reactive.repository.ItemRepository;
 import com.spring.reactive.service.CartService;
 import com.spring.reactive.service.InventoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +35,7 @@ public class HomeController {
     @GetMapping
     public Mono<Rendering> home() {
         return Mono.just(Rendering.view("home.html")
-                .modelAttribute("items", this.itemRepository.findAll())
+                .modelAttribute("items", this.itemRepository.findAll().doOnNext(System.out::println))
                 .modelAttribute("cart", this.cartRepository.findById("My Cart")
                                                         .defaultIfEmpty(new Cart("My Cart")))
                 .build());
