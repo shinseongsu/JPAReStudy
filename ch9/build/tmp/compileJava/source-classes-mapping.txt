@@ -5,7 +5,13 @@ com/bwc/mydata/ApplicationBoot.java
  com.bwc.mydata.ApplicationBoot
 com/bwc/mydata/vo/verifyReqvo.java
  com.bwc.mydata.vo.verifyReqvo
-com/bwc/mydata/controller/verifyController.java
- com.bwc.mydata.controller.verifyController
 com/bwc/mydata/exception/ExceptionController.java
  com.bwc.mydata.exception.ExceptionController
+com/bwc/mydata/controller/verifyController.java
+ com.bwc.mydata.controller.verifyController
+com/bwc/mydata/vo/paidMethodvo.java
+ com.bwc.mydata.vo.paidMethodvo
+ com.bwc.mydata.vo.paidMethodvo$paidMethodvoBuilder
+com/bwc/mydata/vo/paidvo.java
+ com.bwc.mydata.vo.paidvo
+ com.bwc.mydata.vo.paidvo$paidvoBuilder
