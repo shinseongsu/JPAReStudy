@@ -7,25 +7,28 @@ import com.bwc.mydata.vo.verifyReqvo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@Validated
 public class verifyController {
 
     @RequestMapping(value = "{version}/customer/verify" , method = RequestMethod.POST)
-    public ResponseEntity<?> verify(@Valid @RequestBody verifyReqvo vo,
+    public ResponseEntity<Object> verify(@Valid @RequestBody verifyReqvo vo,
                                     @PathVariable(value = "version") String version,
-                                    @RequestHeader(value = "X-Req-Id", required = false)
-                                        @Pattern(regexp = "^[0-9a-z]*$", message = "알파벳과 숫자만 입력가능합니다.")
-                                        @Size(max=2, message = "header 자릿값 에러") String ReqId) {
+                                    Errors error) {
+
+        if(error.hasErrors()) {
+            FieldError fieldError = error.getFieldError();
+            System.out.println(fieldError.getDefaultMessage());
+        }
 
         ErrorResponse response = ErrorResponse.builder()
                                     .rsp_code("00000")
@@ -33,7 +36,6 @@ public class verifyController {
                                     .build();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Req-Id", ReqId);
 
         return new ResponseEntity<>(response, headers ,HttpStatus.OK);
     }
@@ -64,6 +66,7 @@ public class verifyController {
                 .build();
 
         List<paidMethodvo> list = Arrays.asList( paidMethod1, paidMethod2 );
+        list = new ArrayList<>();
         return list;
     }
 

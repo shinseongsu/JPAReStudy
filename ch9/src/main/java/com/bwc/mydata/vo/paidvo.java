@@ -13,7 +13,6 @@ public class paidvo {
     private String rsp_code;
     private String rsp_msg;
 
-    @JsonInclude(value = JsonInclude.Include.NON_EMPTY)
     private List<paidMethodvo> accountList;
 
 }
