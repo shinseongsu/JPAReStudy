@@ -1,6 +1,7 @@
 package com.bwc.mydata.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class verifyReqvo {
 
     @NotEmpty(message = "필수값입니다.")

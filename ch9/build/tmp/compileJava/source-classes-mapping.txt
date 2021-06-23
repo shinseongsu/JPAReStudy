@@ -1,8 +1,14 @@
 com/bwc/mydata/vo/verifyReqvo.java
  com.bwc.mydata.vo.verifyReqvo
-com/bwc/mydata/vo/paidvo.java
- com.bwc.mydata.vo.paidvo
- com.bwc.mydata.vo.paidvo$paidvoBuilder
+ com.bwc.mydata.vo.verifyReqvo$verifyReqvoBuilder
+com/bwc/mydata/repository/MemberRepository.java
+ com.bwc.mydata.repository.MemberRepository
+com/bwc/mydata/Cache/CacheManagerCheck.java
+ com.bwc.mydata.Cache.CacheManagerCheck
+com/bwc/mydata/config/CacheConfig.java
+ com.bwc.mydata.config.CacheConfig
+com/bwc/mydata/controller/verifyController.java
+ com.bwc.mydata.controller.verifyController
 com/bwc/mydata/ApplicationBoot.java
  com.bwc.mydata.ApplicationBoot
 com/bwc/mydata/exception/ExceptionController.java
@@ -13,5 +19,10 @@ com/bwc/mydata/vo/paidMethodvo.java
 com/bwc/mydata/vo/ErrorResponse.java
  com.bwc.mydata.vo.ErrorResponse
  com.bwc.mydata.vo.ErrorResponse$ErrorResponseBuilder
-com/bwc/mydata/controller/verifyController.java
- com.bwc.mydata.controller.verifyController
+com/bwc/mydata/vo/paidvo.java
+ com.bwc.mydata.vo.paidvo
+ com.bwc.mydata.vo.paidvo$paidvoBuilder
+com/bwc/mydata/vo/Member.java
+ com.bwc.mydata.vo.Member
+com/bwc/mydata/repository/MemberRepositoryImpl.java
+ com.bwc.mydata.repository.MemberRepositoryImpl
